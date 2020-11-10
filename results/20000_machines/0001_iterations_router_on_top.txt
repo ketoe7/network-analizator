@@ -1,0 +1,13 @@
+2020-10-19 22:56:31,448 INFO       20000 nano nodes
+
+2020-10-19 22:56:31,449 INFO         1 iteration
+2020-10-19 22:56:31,452 INFO         10 machines are potential to transmit data data
+2020-10-19 22:57:06,742 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 22:57:06,743 INFO         0 collisions detected
+
+2020-10-19 22:57:06,743 INFO       Number of iterations: 1
+2020-10-19 22:57:06,743 INFO       Results for 20000: [0]
+2020-10-19 22:57:06,743 INFO       The amount of successful transmissions: 0
+2020-10-19 22:57:06,743 INFO       The amount of collisions: 0
+2020-10-19 22:57:06,743 INFO       Rate: 0.0%
+

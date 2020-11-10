@@ -1,0 +1,80 @@
+2020-10-19 21:15:48,219 INFO     Simulation started. Parameters:
+2020-10-19 21:15:48,220 INFO     NANO_NODES_NUMBER: [20000]
+2020-10-19 21:15:48,220 INFO     iter_number: 1000
+
+2020-10-19 21:15:48,221 INFO       20000 nano nodes
+
+2020-10-19 21:15:48,221 INFO         1 iteration
+2020-10-19 21:15:48,224 INFO         15 machines are potential to transmit data data
+2020-10-19 21:16:34,039 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:16:34,039 INFO         0 collisions detected
+
+2020-10-19 21:16:34,039 INFO         2 iteration
+2020-10-19 21:16:34,042 INFO         9 machines are potential to transmit data data
+2020-10-19 21:16:58,475 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:16:58,476 INFO         0 collisions detected
+
+2020-10-19 21:16:58,476 INFO         3 iteration
+2020-10-19 21:16:58,479 INFO         5 machines are potential to transmit data data
+2020-10-19 21:17:15,136 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:17:15,136 INFO         0 collisions detected
+
+2020-10-19 21:17:15,136 INFO         4 iteration
+2020-10-19 21:17:15,140 INFO         9 machines are potential to transmit data data
+2020-10-19 21:17:33,660 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:17:33,660 INFO         0 collisions detected
+
+2020-10-19 21:17:33,660 INFO         5 iteration
+2020-10-19 21:17:33,663 INFO         6 machines are potential to transmit data data
+2020-10-19 21:17:54,920 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:17:54,920 INFO         0 collisions detected
+
+2020-10-19 21:17:54,920 INFO         6 iteration
+2020-10-19 21:17:54,923 INFO         12 machines are potential to transmit data data
+2020-10-19 21:18:14,421 INFO             Machine N96 successfully sent data!
+2020-10-19 21:18:22,827 INFO         1/112 machines successfully sent data (0.8928571428571428%)
+2020-10-19 21:18:22,828 INFO         0 collisions detected
+
+2020-10-19 21:18:22,828 INFO         7 iteration
+2020-10-19 21:18:22,831 INFO         11 machines are potential to transmit data data
+2020-10-19 21:18:48,842 INFO             Machine N49 successfully sent data!
+2020-10-19 21:18:51,368 INFO         1/112 machines successfully sent data (0.8928571428571428%)
+2020-10-19 21:18:51,369 INFO         0 collisions detected
+
+2020-10-19 21:18:51,369 INFO         8 iteration
+2020-10-19 21:18:51,371 INFO         3 machines are potential to transmit data data
+2020-10-19 21:19:01,470 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:19:01,470 INFO         0 collisions detected
+
+2020-10-19 21:19:01,470 INFO         9 iteration
+2020-10-19 21:19:01,473 INFO         9 machines are potential to transmit data data
+2020-10-19 21:19:25,679 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:19:25,679 INFO         0 collisions detected
+
+2020-10-19 21:19:25,679 INFO         10 iteration
+2020-10-19 21:19:25,682 INFO         4 machines are potential to transmit data data
+2020-10-19 21:19:37,583 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:19:37,583 INFO         0 collisions detected
+
+2020-10-19 21:19:37,583 INFO         11 iteration
+2020-10-19 21:19:37,586 INFO         11 machines are potential to transmit data data
+2020-10-19 21:20:12,694 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:20:12,695 INFO         0 collisions detected
+
+2020-10-19 21:20:12,695 INFO         12 iteration
+2020-10-19 21:20:12,698 INFO         8 machines are potential to transmit data data
+2020-10-19 21:20:41,090 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:20:41,090 INFO         0 collisions detected
+
+2020-10-19 21:20:41,090 INFO         13 iteration
+2020-10-19 21:20:41,094 INFO         6 machines are potential to transmit data data
+2020-10-19 21:21:04,421 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:21:04,422 INFO         0 collisions detected
+
+2020-10-19 21:21:04,422 INFO         14 iteration
+2020-10-19 21:21:04,425 INFO         3 machines are potential to transmit data data
+2020-10-19 21:21:10,991 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 21:21:10,991 INFO         0 collisions detected
+
+2020-10-19 21:21:10,991 INFO         15 iteration
+2020-10-19 21:21:10,994 INFO         8 machines are potential to transmit data data

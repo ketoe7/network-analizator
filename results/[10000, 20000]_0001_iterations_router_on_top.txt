@@ -1,0 +1,33 @@
+2020-10-19 22:56:16,321 INFO     Simulation started. Parameters:
+2020-10-19 22:56:16,322 INFO     NANO_NODES_NUMBER: [10000, 20000]
+2020-10-19 22:56:16,323 INFO     iter_number: 1
+
+2020-10-19 22:56:16,330 INFO       10000 nano nodes
+
+2020-10-19 22:56:16,331 INFO         1 iteration
+2020-10-19 22:56:16,332 INFO         4 machines are potential to transmit data data
+2020-10-19 22:56:31,438 INFO         0/56 machines successfully sent data (0.0%)
+2020-10-19 22:56:31,439 INFO         0 collisions detected
+
+2020-10-19 22:56:31,439 INFO       Number of iterations: 1
+2020-10-19 22:56:31,440 INFO       Results for 10000: [0]
+2020-10-19 22:56:31,440 INFO       The amount of successful transmissions: 0
+2020-10-19 22:56:31,440 INFO       The amount of collisions: 0
+2020-10-19 22:56:31,440 INFO       Rate: 0.0%
+
+2020-10-19 22:56:31,448 INFO       20000 nano nodes
+
+2020-10-19 22:56:31,449 INFO         1 iteration
+2020-10-19 22:56:31,452 INFO         10 machines are potential to transmit data data
+2020-10-19 22:57:06,742 INFO         0/112 machines successfully sent data (0.0%)
+2020-10-19 22:57:06,743 INFO         0 collisions detected
+
+2020-10-19 22:57:06,743 INFO       Number of iterations: 1
+2020-10-19 22:57:06,743 INFO       Results for 20000: [0]
+2020-10-19 22:57:06,743 INFO       The amount of successful transmissions: 0
+2020-10-19 22:57:06,743 INFO       The amount of collisions: 0
+2020-10-19 22:57:06,743 INFO       Rate: 0.0%
+
+2020-10-19 22:57:06,743 INFO     Amount of successful transmissions and collisions for 1 iterations based on number of nano nodes:
+2020-10-19 22:57:06,744 INFO     10000 nano nodes: 0 successful transmissions, 0 collisions
+2020-10-19 22:57:06,744 INFO     20000 nano nodes: 0 successful transmissions, 0 collisions
