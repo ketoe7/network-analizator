@@ -11,6 +11,7 @@ from Devices.NanoNode import NanoNode
 from Devices.Router import Router
 from Veins.Vein import Vein
 from Vector import Vector
+from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime
 import pandas as pd
 import numpy as np
@@ -33,7 +34,7 @@ TRANSMISSION_DURATION = 64
 IDLE_DURATION = 10**6
 # IDLE_DURATION = 2
 # 60.6
-cephalic_vein = Vein('Cephalic Vein', length=10.9, radius=0.3, velocity=1.09*10**(-5))
+cephalic_vein = Vein('Cephalic Vein', length=4.8, radius=0.3, velocity=1.09*10**(-5))
 # cephalic_vein = Vein('Cephalic Vein', length=1, radius=0.3, velocity=1.09*10**(-2))
 
 
@@ -41,6 +42,69 @@ def print_and_return(sentence, f):
     print(sentence)
     f.write(sentence + '\n')
     return sentence + '\n'
+
+
+class Simulator:
+    def __init__(self):
+        pass
+
+    def _generate_data(self):
+        all_devices = AllDevice()
+        vein_diameter_start_point = Vector(-1 * (cephalic_vein.length / 2), 0, 0)
+        vein_diameter_end_point = Vector(cephalic_vein.length / 2, 0, 0)
+        # router = Router(1, Vector(0, 0, cephalic_vein.radius), 0.1)
+        router = Router(1, Vector((cephalic_vein.length / 2) - TRANSMISSION_RADIUS_RANGE, 0, cephalic_vein.radius),
+                        TRANSMISSION_RADIUS_RANGE)
+        # router = Router(1, Vector((cephalic_vein.length/2)-TRANSMISSION_RADIUS_RANGE, 0, 0), TRANSMISSION_RADIUS_RANGE)
+        all_devices.add_device(router)
+        dev_id = 1
+        while len(all_devices.nano_nodes) < nodes_within_cephalic_vein:
+            # x = random.uniform(-1*(cephalic_vein.length/2), cephalic_vein.length/2)
+
+            x = random.uniform(-1 * (cephalic_vein.length / 2), router.position.x - router.transmission_radius)
+            y = random.uniform(-1 * cephalic_vein.radius, cephalic_vein.radius)
+            z = random.uniform(-1 * cephalic_vein.radius, cephalic_vein.radius)
+            machine_position = Vector(x, y, z)
+            distance_from_diameter = machine_position.distance(vein_diameter_start_point, vein_diameter_end_point)
+            if distance_from_diameter < cephalic_vein.radius:
+                vein_diameter = cephalic_vein.radius * 2
+                machine_velocity = cephalic_vein.velocity * 2 * (
+                            cephalic_vein.radius ** 2 - distance_from_diameter ** 2) / (cephalic_vein.radius ** 2)
+                # machine_velocity = cephalic_vein.velocity
+                transmit = random.choices([False, True], weights=(93.6, 6.4), k=1)
+                # print(f'generated transmit parameter: {transmit[0]}')
+                if transmit[0]:
+                    transmission_timer = random.choice(range(0, TRANSMISSION_DURATION))
+                    idle_timer = IDLE_DURATION
+                else:
+                    idle_timer = random.choice(range(0, IDLE_DURATION))
+                    transmission_timer = TRANSMISSION_DURATION
+
+                # router on the center
+                # if (-1 * (router.transmission_radius) <= machine_position.y <= router.transmission_radius) and (-1 * router.transmission_radius <= machine_position.z <= router.transmission_radius):
+                # router on the top
+                if (-1 * (router.transmission_radius) <= machine_position.y <= router.transmission_radius) and (
+                        router.position.z - router.transmission_radius <= machine_position.z <= router.position.z + router.transmission_radius):
+                    transmission_result = None
+                else:
+                    transmission_result = False
+
+                all_devices.add_device(NanoNode(dev_id,
+                                                machine_position,
+                                                machine_velocity,
+                                                transmission_status=(transmit[0], False),
+                                                transmission_duration=TRANSMISSION_DURATION,
+                                                transmission_timer=transmission_timer,
+                                                idle_duration=IDLE_DURATION,
+                                                idle_timer=idle_timer,
+                                                transmission_result=transmission_result
+                                                )
+                                       )
+                dev_id += 1
+
+        return all_devices
+
+
 
 
 def generate_data(nodes_within_cephalic_vein):
@@ -95,6 +159,42 @@ def generate_data(nodes_within_cephalic_vein):
             dev_id += 1
 
     return all_devices
+
+def _move_machine(machine):
+    return move_machine(machine, potential_machines, router, logger)
+
+
+def move_machine(machine, potential_machines, router, logger):
+    if machine.position.x <= cephalic_vein.length / 2 and machine.transmission_result is not False:
+        machine.move(TIME_SAMPLE)
+        if machine.position.distance_from_point(router.position) <= router.transmission_radius:
+            machine.within_transmission_range = True
+            # print(f'Machine {machine.device_id} is located within transmission range!')
+            # print(machine)
+        if machine.transmission_status['transmit']:
+            if machine.transmission_timer > 0:
+                machine.transmission_timer -= 1
+            else:
+                if machine.transmission_status['started_within_transmission_range'] and machine.within_transmission_range:
+                    if machine.transmission_result is None:
+                        machine.transmission_result = True
+                        logger.info(f'{" " * 8}Machine {machine.device_id} successfully sent data!')
+                # else:
+                machine.transmission_status = {'transmit': False, 'started_within_transmission_range': False}
+                machine.idle_timer = machine.idle_duration
+        else:
+            if machine.idle_timer > 0:
+                machine.idle_timer -= 1
+            else:
+                if machine.within_transmission_range:
+                    machine.transmission_status = {'transmit': True, 'started_within_transmission_range': True}
+                    # print(f'Machine {machine.device_id} started to transmit data within transmission range!')
+                else:
+                    machine.transmission_status = {'transmit': True, 'started_within_transmission_range': False}
+                machine.transmission_timer = machine.transmission_duration
+    else:
+        potential_machines.remove(machine)
+        # print(f'potential_machines: ' + f', '.join([m.device_id for m in potential_machines]))
 
 
 def run_simulation():
@@ -175,7 +275,10 @@ def run_simulation():
             logger.info(f'{" " * 4}{len(potential_machines)} machines are potential to transmit data data')
             # print(f'{len(transmitting_machines)} of potential machines are transmitting at the beginning of simulation')
 
-            for _ in [TIME_SAMPLE * _ for _ in np.arange(0, int(SIMULATION_TIME/TIME_SAMPLE))]:
+            while potential_machines:
+            # for _ in [TIME_SAMPLE * _ for _ in np.arange(0, int(SIMULATION_TIME/TIME_SAMPLE))]:
+                pool = ProcessPoolExecutor(max_workers=6)
+                results = list(pool.map(_move_machine, list(potential_machines)))
                 for machine in list(potential_machines):
                     if machine.position.x <= cephalic_vein.length/2 and machine.transmission_result is not False:
                         machine.move(TIME_SAMPLE)

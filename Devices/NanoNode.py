@@ -8,7 +8,8 @@
 """
 from Vector import Vector
 from Devices.Device import Device
-from typing import Tuple
+from Devices.Router import Router
+from utility import indent
 
 
 class NanoNode(Device):
@@ -17,16 +18,20 @@ class NanoNode(Device):
     @author: Mikołaj Wierzbicki
     """
 
-    def __init__(self, device_id: int, position: Vector, velocity: float, transmission_status: Tuple[bool, bool] = (True, False), within_transmission_range: bool = False, transmission_duration: float = 6.4*10**(-5), transmission_timer: float = 6.4*10**(-5), idle_duration: int = 1, idle_timer: int = 1, transmission_result=None) -> None:
+    def __init__(self, device_id: int, position: Vector, velocity: float, is_transmitting: bool,
+                 started_within_transmission_range: bool, within_transmission_range: bool, transmission_duration: float,
+                 transmission_timer: float, idle_duration: int, idle_timer: int, transmission_result, logger) -> None:
         super().__init__('node', device_id, position)
         self.velocity = velocity
-        self.transmission_status = {'transmit': transmission_status[0], 'started_within_transmission_range': transmission_status[1]}
+        self.is_transmitting = is_transmitting
+        self.started_within_transmission_range = started_within_transmission_range
         self.within_transmission_range = within_transmission_range
         self.transmission_duration = transmission_duration
         self.transmission_timer = transmission_timer
         self.idle_duration = idle_duration
         self.idle_timer = idle_timer
         self.transmission_result = transmission_result
+        self.logger = logger
 
     @property
     def velocity(self) -> float:
@@ -84,10 +89,32 @@ class NanoNode(Device):
             raise ValueError(f"transmission_timer must be positive number between 0 and {self.idle_duration}")
 
     def change_transmission_status(self):
-        self.transmission_status = not self.transmission_status
+        self.is_transmitting = not self.is_transmitting
 
-    def move(self, moving_time: float):
+    def move(self, moving_time: float, router: Router):
         self.position = Vector(self.position.x + (moving_time*self.velocity), self.position.y, self.position.z)
+        if self.position.distance_from_point(router.position) <= router.transmission_radius:
+            self.within_transmission_range = True
+            # self.logger.info(f'Machine {self.device_id} is located within transmission range!')
+        if self.is_transmitting:
+            if self.transmission_timer > 0:
+                self.transmission_timer -= 1
+            else:
+                if self.started_within_transmission_range and self.within_transmission_range:
+                    # if self.transmission_result is None:
+                    self.transmission_result = True
+                    self.logger.info(indent(f'Machine {self.device_id} successfully sent data!', 8))
+                self.is_transmitting = False
+                self.started_within_transmission_range = False
+                self.idle_timer = self.idle_duration
+        else:
+            if self.idle_timer > 0:
+                self.idle_timer -= 1
+            else:
+                self.is_transmitting = True
+                self.started_within_transmission_range = True if self.within_transmission_range else False
+                # self.logger.info(f'Machine {self.device_id} started to transmit data within transmission range!') if self.started_within_transmission_range
+                self.transmission_timer = self.transmission_duration
 
     def __repr__(self) -> str:
         return f'{self.device_type} with id {self.device_id}, position {self.position}, velocity {self.velocity}'\
@@ -98,24 +125,6 @@ class NanoNode(Device):
         return f'{self.device_type} with id {self.device_id}, position {self.position}, velocity {self.velocity}'\
                 # 'transmission_status {self.transmission_status}, transmission_duration {self.transmission_duration}'\
                 # 'transmission_timer {self.transmission_timer}, idle_duration {self.idle_duration}, idle_timer {self.idle_timer}'
-
-class Pair():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def __format__(self, spec):
-        return "{}{}{}".format(self.x, spec, self.y)
-
-    def __str__(self):
-        return "{:/}".format(self, 'miki')
-
-    def __repr__(self):
-        return "Pair({}, {})".format(self.x, self.y)
-
-
-# pair = Pair(1, 2)
-# print(pair)
 
 
 # first_device = Device('node', 123, (1.3, 4.2, 5.2))

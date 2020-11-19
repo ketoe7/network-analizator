@@ -1,5 +1,5 @@
+# from Devices.Router import Router
 import math
-
 
 class Vector:
     """
@@ -34,7 +34,7 @@ class Vector:
     def magnitude(self):
         return math.sqrt(self.x**2 + self.y**2 + self.z**2)
 
-    def distance(self, line_point1, line_point2):
+    def distance_from_line(self, line_point1, line_point2):
         AB = line_point2 - line_point1
         AC = self - line_point1
         area = (AB * AC).magnitude()
@@ -44,11 +44,10 @@ class Vector:
     def distance_from_point(self, other):
         return math.sqrt((other.x - self.x)**2 + (other.y - self.y)**2 + (other.z - self.z)**2)
 
+    def can_cross_transmission_range(self, router: object):
+        return (router.position.y - router.transmission_radius <= self.y <= router.position.y + router.transmission_radius) \
+               and (router.position.z - router.transmission_radius <= self.z <= router.position.z + router.transmission_radius)
+
     def __repr__(self):
         return f'({self.x:.5f}, {self.y:.5f}, {self.z:.5f})'
-
-line_point1 = Vector(0, 0, 0)
-line_point2 = Vector(1, 0, 0)
-point = Vector(4, 2, 2)
-print(point.distance(line_point1, line_point2))
 
