@@ -1,6 +1,7 @@
 # from Devices.Router import Router
 import math
 
+
 class Vector:
     """
         @classDescription:
@@ -48,6 +49,35 @@ class Vector:
         return (router.position.y - router.transmission_radius <= self.y <= router.position.y + router.transmission_radius) \
                and (router.position.z - router.transmission_radius <= self.z <= router.position.z + router.transmission_radius)
 
+    def move_vector(self, time, velocity):
+        return Vector(self.x + (time * velocity), self.y, self.z)
+
+    def get_sphere_intersections(self, center, radius):
+        a = 1
+        b = 2*self.x - 2*center.x
+        c = self.x**2 + self.y**2 + self.z**2 + center.x**2 + center.y**2 + center.z**2 - 2*self.x*center.x - 2*self.y*center.y - 2*self.z*center.z - radius**2
+
+        d = b**2 - 4*a*c
+        # print(d)
+        sqrt_val = math.sqrt(abs(d))
+        if d > 0:
+            # print(" real and different roots ")
+            t = [(-b - sqrt_val) / (2 * a), (-b + sqrt_val) / (2 * a)]
+        elif d == 0:
+            # print(" real and same roots")
+            t = [-b / (2 * a)]
+        else:
+            t = []
+
+        v = []
+        for _ in t:
+            v.append(Vector(self.x + _, self.y, self.z))
+        return v
+
     def __repr__(self):
         return f'({self.x:.5f}, {self.y:.5f}, {self.z:.5f})'
 
+# P = Vector(0, 0, 1)
+# S = Vector(2, 0, 0)
+# r = 1
+# print(P.get_sphere_intersections(S, r))
