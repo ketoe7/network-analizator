@@ -35,13 +35,6 @@ class NanoNode(Device):
         self.next_transmissions = self.get_next_transmissions(vein)
         self.logger = logger
 
-    # def next_transmission(self, router):
-    #     if not self.is_transmitting:
-    #         while x := self.position.x <=
-    #         position = self._move(self.idle_timer)
-    #         if self.position.distance_from_point(router.position) <= router.transmission_radius:
-    #             self.within_transmission_range = True
-
     @property
     def velocity(self) -> float:
         return self.__velocity
@@ -158,37 +151,28 @@ class NanoNode(Device):
             end_time = self.transmission_timer
             start_pos = self.position
             end_pos = self.position.move_vector(end_time, self.velocity)
-
+        i = 1
         while True:
             if self.intersections[1].x - self.intersections[0].x >= start_pos.x - end_pos.x:
-                if within_transmission_end_time >=start_time >= within_transmission_start_time:
-                    next_transmissions.append({'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time, 'e_start': start_time, 'e_end': min(within_transmission_end_time, end_time)}})
+                if within_transmission_end_time >= start_time >= within_transmission_start_time:
+                    next_transmissions.append({'id': f'{self.device_id}_{i}', 'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time, 'e_start': start_time, 'e_end': min(within_transmission_end_time, end_time)}})
+                    i += 1
                 elif within_transmission_end_time >= end_time >= within_transmission_start_time:
-                    next_transmissions.append({'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time, 'e_start': max(start_time, within_transmission_start_time), 'e_end': end_time}})
+                    next_transmissions.append({'id': f'{self.device_id}_{i}', 'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time, 'e_start': max(start_time, within_transmission_start_time), 'e_end': end_time}})
+                    i += 1
             else:
                 if within_transmission_end_time >= start_time >= within_transmission_start_time:
-                    next_transmissions.append({'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time, 'e_start': start_time, 'e_end': within_transmission_end_time}})
+                    next_transmissions.append({'id': f'{self.device_id}_{i}', 'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time, 'e_start': start_time, 'e_end': within_transmission_end_time}})
+                    i += 1
                 elif within_transmission_end_time >= end_time >= within_transmission_start_time:
-                    next_transmissions.append({'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time, 'e_start': within_transmission_start_time, 'e_end': end_time}})
+                    next_transmissions.append({'id': f'{self.device_id}_{i}', 'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time, 'e_start': within_transmission_start_time, 'e_end': end_time}})
+                    i += 1
             start_time = end_time + self.idle_duration
             end_time = start_time + self.transmission_duration
             start_pos = self.position.move_vector(start_time, self.velocity)
             end_pos = self.position.move_vector(end_time, self.velocity)
             if end_time > 6e7 or start_pos.x >= vein.length:
                 break
-
-
-        # current_pos = end_pos
-        # while current_pos.x < vein.length:
-        #     start_time = next_transmissions[-1]['time']['end'] + self.idle_duration
-        #     end_time = start_time + self.transmission_duration
-        #     if end_time > 6e7:
-        #         break
-        #     start_pos = self.position.move_vector(start_time, self.velocity)
-        #     end_pos = self.position.move_vector(end_time, self.velocity)
-        #     if start_time >= within_transmission_start_time or end_time <= within_transmission_end_time:
-        #         next_transmissions.append({'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time}})
-        #     current_pos = end_pos
 
         return next_transmissions
 
