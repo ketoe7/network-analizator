@@ -6,7 +6,7 @@
     History of Modification:
     Mikołaj Wierzbicki        Jul 31,  2020        Initial version
 """
-
+from Vector import Vector
 
 class Vein:
     """
@@ -16,9 +16,10 @@ class Vein:
 
     def __init__(self, name: str, length: float, radius: float, velocity: float) -> None:
         self.name = name
-        self.length = length
-        self.radius = radius
         self.velocity = velocity
+        self.radius = radius
+        self.length = length
+        self.abstract_length = Vector.speed_for_d(self.velocity, self.radius, self.radius - transmission_radius_range) * simulation_time
 
     @property
     def name(self) -> str:

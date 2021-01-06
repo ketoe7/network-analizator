@@ -10,6 +10,7 @@ from Vector import Vector
 from Devices.Device import Device
 from Devices.Router import Router
 from utility import indent
+from GeneralConfig import GeneralConfig
 
 
 class NanoNode(Device):
@@ -19,16 +20,15 @@ class NanoNode(Device):
     """
 
     def __init__(self, device_id: int, position: Vector, velocity: float, is_transmitting: bool,
-                 started_within_transmission_range: bool, within_transmission_range: bool, transmission_duration: float,
-                 transmission_timer: float, idle_duration: int, idle_timer: int, transmission_result, vein, router, logger) -> None:
+                 started_within_transmission_range: bool, within_transmission_range: bool, transmission_timer: float,
+                 idle_timer: int, transmission_result, vein, router, logger) -> None:
         super().__init__('node', device_id, position)
+        self.gc = GeneralConfig()
         self.velocity = velocity
         self.is_transmitting = is_transmitting
         self.started_within_transmission_range = started_within_transmission_range
         self.within_transmission_range = within_transmission_range
-        self.transmission_duration = transmission_duration
         self.transmission_timer = transmission_timer
-        self.idle_duration = idle_duration
         self.idle_timer = idle_timer
         self.transmission_result = transmission_result
         self.intersections = self.position.get_sphere_intersections(router.position, router.transmission_radius)
@@ -40,16 +40,8 @@ class NanoNode(Device):
         return self.__velocity
 
     @property
-    def transmission_duration(self) -> int:
-        return self.__transmission_duration
-
-    @property
     def transmission_timer(self) -> int:
         return self.__transmission_timer
-
-    @property
-    def idle_duration(self) -> int:
-        return self.__idle_duration
 
     @property
     def idle_timer(self) -> int:
@@ -62,33 +54,19 @@ class NanoNode(Device):
         else:
             raise ValueError("Machine's velocity must be positive number")
 
-    @transmission_duration.setter
-    def transmission_duration(self, transmission_duration: int) -> None:
-        if transmission_duration > 0:
-            self.__transmission_duration = transmission_duration
-        else:
-            raise ValueError("transmission_duration must be positive number")
-
     @transmission_timer.setter
     def transmission_timer(self, transmission_timer: int) -> None:
-        if 0 <= transmission_timer <= self.transmission_duration:
+        if 0 <= transmission_timer <= self.gc.transmission_duration:
             self.__transmission_timer = transmission_timer
         else:
-            raise ValueError(f"transmission_timer must be positive number between 0 and {self.transmission_duration}")
-
-    @idle_duration.setter
-    def idle_duration(self, idle_duration: int) -> None:
-        if isinstance(idle_duration, int) and idle_duration >= 0:
-            self.__idle_duration = idle_duration
-        else:
-            raise ValueError("idle_duration must be positive integers")
+            raise ValueError(f"transmission_timer must be positive number between 0 and {self.gc.transmission_duration}")
 
     @idle_timer.setter
     def idle_timer(self, idle_timer: int) -> None:
-        if 0 <= idle_timer <= self.idle_duration:
+        if 0 <= idle_timer <= self.gc.idle_duration:
             self.__idle_timer = idle_timer
         else:
-            raise ValueError(f"transmission_timer must be positive number between 0 and {self.idle_duration}")
+            raise ValueError(f"transmission_timer must be positive number between 0 and {self.gc.idle_duration}")
 
     def change_transmission_status(self):
         self.is_transmitting = not self.is_transmitting
@@ -111,7 +89,7 @@ class NanoNode(Device):
                     self.logger.info(indent(f'Machine {self.device_id} successfully sent data!', 8))
                 self.is_transmitting = False
                 self.started_within_transmission_range = False
-                self.idle_timer = self.idle_duration
+                self.idle_timer = self.gc.idle_duration
         else:
             if self.idle_timer > 0:
                 self.idle_timer -= 1
@@ -119,7 +97,7 @@ class NanoNode(Device):
                 self.is_transmitting = True
                 self.started_within_transmission_range = True if self.within_transmission_range else False
                 # self.logger.info(f'Machine {self.device_id} started to transmit data within transmission range!') if self.started_within_transmission_range
-                self.transmission_timer = self.transmission_duration
+                self.transmission_timer = self.gc.transmission_duration
 
     def get_next_transmissions(self, vein):
         """
@@ -143,7 +121,7 @@ class NanoNode(Device):
         next_transmissions = []
         if not self.is_transmitting:
             start_time = self.idle_timer
-            end_time = self.idle_timer + self.transmission_duration
+            end_time = self.idle_timer + self.gc.transmission_duration
             start_pos = self.position.move_vector(start_time, self.velocity)
             end_pos = self.position.move_vector(end_time, self.velocity)
         else:
@@ -167,8 +145,8 @@ class NanoNode(Device):
                 elif within_transmission_end_time >= end_time >= within_transmission_start_time:
                     next_transmissions.append({'id': f'{self.device_id}_{i}', 'positions': {'start': start_pos, 'end': end_pos}, 'time': {'start': start_time, 'end': end_time, 'e_start': within_transmission_start_time, 'e_end': end_time}})
                     i += 1
-            start_time = end_time + self.idle_duration
-            end_time = start_time + self.transmission_duration
+            start_time = end_time + self.gc.idle_duration
+            end_time = start_time + self.gc.transmission_duration
             start_pos = self.position.move_vector(start_time, self.velocity)
             end_pos = self.position.move_vector(end_time, self.velocity)
             if end_time > 6e7 or start_pos.x >= vein.length:
@@ -178,13 +156,13 @@ class NanoNode(Device):
 
     def __repr__(self) -> str:
         return f'{self.device_type} with id {self.device_id}, position {self.position}, velocity {self.velocity}'\
-                # 'transmission_status {self.transmission_status}, transmission_duration {self.transmission_duration}'\
-                # 'transmission_timer {self.transmission_timer}, idle_duration {self.idle_duration}, idle_timer {self.idle_timer}'
+                # 'transmission_status {self.transmission_status}, transmission_duration {self.gc.transmission_duration}'\
+                # 'transmission_timer {self.transmission_timer}, idle_duration {self.gc.idle_duration}, idle_timer {self.idle_timer}'
 
     def __str__(self) -> str:
         return f'{self.device_type} with id {self.device_id}, position {self.position}, velocity {self.velocity}'\
-                # 'transmission_status {self.transmission_status}, transmission_duration {self.transmission_duration}'\
-                # 'transmission_timer {self.transmission_timer}, idle_duration {self.idle_duration}, idle_timer {self.idle_timer}'
+                # 'transmission_status {self.transmission_status}, transmission_duration {self.gc.transmission_duration}'\
+                # 'transmission_timer {self.transmission_timer}, idle_duration {self.gc.idle_duration}, idle_timer {self.idle_timer}'
 
 
 # first_device = Device('node', 123, (1.3, 4.2, 5.2))

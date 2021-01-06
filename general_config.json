@@ -1,0 +1,8 @@
+{
+  "transmission_radius_range": 0.1,
+  "time_sample": 1,
+  "simulation_time": 6e7,
+  "transmission_duration": 64,
+  "idle_duration": 1e6,
+  "blood_volume": 5000
+}

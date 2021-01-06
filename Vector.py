@@ -45,7 +45,7 @@ class Vector:
     def distance_from_point(self, other):
         return math.sqrt((other.x - self.x)**2 + (other.y - self.y)**2 + (other.z - self.z)**2)
 
-    def can_cross_transmission_range(self, router: object):
+    def can_cross_transmission_range(self, router):
         return (router.position.y - router.transmission_radius <= self.y <= router.position.y + router.transmission_radius) \
                and (router.position.z - router.transmission_radius <= self.z <= router.position.z + router.transmission_radius)
 
@@ -76,6 +76,10 @@ class Vector:
 
     def __repr__(self):
         return f'({self.x:.5f}, {self.y:.5f}, {self.z:.5f})'
+
+    @staticmethod
+    def speed_for_d(avg_speed, radius, distance):
+        return 2*avg_speed*(radius**2 - distance**2)/(radius**2)
 
 # P = Vector(0, 0, 1)
 # S = Vector(2, 0, 0)
